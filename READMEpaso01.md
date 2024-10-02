@@ -44,7 +44,7 @@ NAME                                       DESIRED   CURRENT   READY   AGE
 replicaset.apps/challenge-app-6f79ff6b8d   1         1         1       4s
 ```
 
-Revisamos el archivo `ingress.yaml` y vemos que dice "\<\<CHANGEME\\>>" en el campo host. Copiamos el archivo ingress.yaml a un nuevo archivo llamado `paso01-ingress.yaml` y allí reemplazamos el valor "<<CHANGEME>>" por el valor "edu.challenger-03" .
+Revisamos el archivo `ingress.yaml` y vemos que dice "\<\<CHANGEME\>\>" en el campo host. Copiamos el archivo ingress.yaml a un nuevo archivo llamado `paso01-ingress.yaml` y allí reemplazamos el valor "\<\<CHANGEME\>\>" por el valor "edu.challenger-03" .
 
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ grep host ingress.yaml 
@@ -101,6 +101,7 @@ whitestackchallenge-worker-f97ebc81-tnx7t   Ready    worker                     
 
 Usamos el comando curl y usamos la función "resolve" para resolver el nombre "edu.challenger-03". Probamos exitosamente la resolución con la IP de cada worker.
 
+Probamos exitosamente la resolución con la IP de whitestackchallenge-worker-f97ebc81-gbspf
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03 --resolve edu.challenger-03:80:10.101.8.122
 <!doctype html>
@@ -121,7 +122,11 @@ challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03
         <input type="submit" value="Upload">
     </form>
 </body>
-</html>challenger-03@challenge-6-pivote:~/ws-challenge-6$ 
+</html>challenger-03@challenge-6-pivote:~/ws-challenge-6$
+```
+
+Ahora probamos exitosamente la resolución con la IP de whitestackchallenge-worker-f97ebc81-kfbgg
+```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03 --resolve edu.challenger-03:80:10.101.8.182
 <!doctype html>
 <html lang="en">
@@ -142,6 +147,10 @@ challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03
     </form>
 </body>
 </html>challenger-03@challenge-6-pivote:~/ws-challenge-6$ 
+```
+
+Y también probamos exitosamente la resolución con la IP de whitestackchallenge-worker-f97ebc81-tnx7t
+```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03 --resolve edu.challenger-03:80:10.101.8.183
 <!doctype html>
 <html lang="en">
@@ -162,17 +171,9 @@ challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03
     </form>
 </body>
 </html>challenger-03@challenge-6-pivote:~/ws-challenge-6$ 
-
-
 ```
 
-
-Escogemos la IP 10.101.8.183 y solicitamos a los compañeros de Whitestack para que nos ayuden agregando la resolución de nombres en dicho archivo.
-
-
-
-
-Debido a que no tenemos permisos de root no podemos editar el archivo "etc/hosts". Por tal motivo 
+Hemos comprobado que la resolución funciona con cualquiera de las IPs de los workers. Debido a que no tenemos permisos de root para editar el archivo "etc/hosts" le solicitamos a los compañeros de Whitestack para que nos ayuden agregando la resolución de nombres en dicho archivo. La resolución escogida es "10.101.8.183 edu.challenger-03" como vemos abajo
 
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ 
@@ -189,3 +190,28 @@ ff02::2 ip6-allrouters
 ff02::3 ip6-allhosts
 10.101.8.183 edu.challenger-03
 ```
+
+ Ahora podemos usar un curl común y corriente sin la opción "resolve" ya que se usará la resolución del archivo "etc/hosts"
+
+```
+challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whitestack Challenge 6</title>
+</head>
+<body>
+    <center><h1>Welcome to the Whitestack Challenge 6</h1> </center>
+    <h2>Environment Variables:</h2>
+    <p>Node Name: whitestackchallenge-worker-f97ebc81-tnx7t</p>
+    <p>Pod Name: challenge-app-6f79ff6b8d-fmzvc</p>
+    <h2>Upload a File</h2>
+    <form method="post" action="/upload" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <input type="submit" value="Upload">
+    </form>
+</body>
+```
+ 
