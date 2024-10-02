@@ -24,3 +24,15 @@ Welcome to Ubuntu 24.04 LTS (GNU/Linux 6.8.0-31-generic x86_64)
 challenger-03@challenge-6-pivote:~$
 ```
 
+
+```
+challenger-03@challenge-6-pivote:~$ echo "export KUBECONFIG=~/whitestackchallenge.yaml" >> ~/.profile
+
+challenger-03@challenge-6-pivote:~$ kubectl get nodes
+Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+NAME                                        STATUS   ROLES                       AGE    VERSION
+whitestackchallenge-master-ad607762-crl4g   Ready    control-plane,etcd,master   200d   v1.28.2+rke2r1
+whitestackchallenge-worker-f97ebc81-gbspf   Ready    worker                      190d   v1.28.2+rke2r1
+whitestackchallenge-worker-f97ebc81-kfbgg   Ready    worker                      200d   v1.28.2+rke2r1
+whitestackchallenge-worker-f97ebc81-tnx7t   Ready    worker                      190d   v1.28.2+rke2r1
+```
