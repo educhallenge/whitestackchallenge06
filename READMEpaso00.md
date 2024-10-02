@@ -24,9 +24,14 @@ Welcome to Ubuntu 24.04 LTS (GNU/Linux 6.8.0-31-generic x86_64)
 challenger-03@challenge-6-pivote:~$
 ```
 
+Ahora creamos la environment variable KUBECONFIG y le asignamos el archivo `whitestackchallenge.yaml`.  Dicha variable la agregamos al archivo `.profile` para que cargue automáticamente cada vez que ingresamos a la máquina remota.
+
+Podemos usar el comando `source` para forzar que se cargue el archivo .profile en la misma sesión en la que ya estamos.  Ahora podemos ejecutar exitosamente cualquier comando kubectl. Abajo mostramos el output de "kubectl get nodes".
 
 ```
 challenger-03@challenge-6-pivote:~$ echo "export KUBECONFIG=~/whitestackchallenge.yaml" >> ~/.profile
+
+challenger-03@challenge-6-pivote:~$ source ~/.profile
 
 challenger-03@challenge-6-pivote:~$ kubectl get nodes
 Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
