@@ -101,7 +101,7 @@ whitestackchallenge-worker-f97ebc81-tnx7t   Ready    worker                     
 
 Usamos el comando curl y usamos la función "resolve" para resolver el nombre "edu.challenger-03". Probamos exitosamente la resolución con la IP de cada worker.
 
-Probamos exitosamente la resolución con la IP de whitestackchallenge-worker-f97ebc81-gbspf
+Probamos exitosamente la resolución con la IP 10.101.8.122 de whitestackchallenge-worker-f97ebc81-gbspf
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03 --resolve edu.challenger-03:80:10.101.8.122
 <!doctype html>
@@ -125,7 +125,7 @@ challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03
 </html>challenger-03@challenge-6-pivote:~/ws-challenge-6$
 ```
 
-Ahora probamos exitosamente la resolución con la IP de whitestackchallenge-worker-f97ebc81-kfbgg
+Ahora probamos exitosamente la resolución con la IP 10.101.8.182 de whitestackchallenge-worker-f97ebc81-kfbgg
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03 --resolve edu.challenger-03:80:10.101.8.182
 <!doctype html>
@@ -149,7 +149,7 @@ challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03
 </html>challenger-03@challenge-6-pivote:~/ws-challenge-6$ 
 ```
 
-Y también probamos exitosamente la resolución con la IP de whitestackchallenge-worker-f97ebc81-tnx7t
+Y también probamos exitosamente la resolución con la IP 10.101.8.183 de whitestackchallenge-worker-f97ebc81-tnx7t
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03 --resolve edu.challenger-03:80:10.101.8.183
 <!doctype html>
@@ -191,7 +191,7 @@ ff02::3 ip6-allhosts
 10.101.8.183 edu.challenger-03
 ```
 
- Ahora podemos usar un curl común y corriente sin la opción "resolve" ya que se usará la resolución del archivo "etc/hosts"
+Ahora podemos usar curl sin la opción "resolve" ya que se usará la resolución del archivo "etc/hosts". Vemos que resuelve el nombre exitosamente.
 
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03
@@ -215,3 +215,11 @@ challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03
 </body>
 ```
  
+Finalmente nos piden definir la environment variable llamada "INGRESS_HOSTNAME" con el valor que escogimos para nuestro hostname "edu.challenger-03". Dicha environment variable la usaremos en los pasos 2 , 3 , 4 y 5 para ejecutar el script python del archivo `test-challenge6.py`
+
+```
+challenger-03@challenge-6-pivote:~/ws-challenge-6$ more test-challenge6.py | grep getenv
+INGRESS_HOSTNAME = os.getenv('INGRESS_HOSTNAME', 'default-hostname')
+
+challenger-03@challenge-6-pivote:~/ws-challenge-6$  export INGRESS_HOSTNAME="edu.challenger-03"
+```
