@@ -14,7 +14,7 @@ Ahora vamos a tener 3 sesiones abiertas en paralelo:
 - C: Revisión de logs en el pod en tiempo real
 
 
-A: Ejecución del script python usando el argumento ***--send_high_load*** . Vemos que los primeros 200 requests tienen un `response code 200` lo cual significa OK.  A partir del request 201 empieza a fallar a veces con un `response code 502` otra veces con `response code 503`.  A partir del request 1436 vuelve a aparecer el `response code 200` pero a partir del request vuelve a fallar hasta el final, es decir hasta el request 2000.
+A: Ejecución del script python usando el argumento ***--send_high_load*** . Vemos que los primeros 200 requests tienen un `response code 200` lo cual significa OK.  A partir del request 201 empieza a fallar a veces con un `response code 502` otra veces con `response code 503`.  A partir del request 1436 vuelve a aparecer el `response code 200` pero a partir del request 1654 vuelve a fallar hasta el final, es decir hasta el request 2000.
 
 ```
 challenger-03@challenge-6-pivote:~$ python3 ws-challenge-6/test-challenge6.py --send_high_load
