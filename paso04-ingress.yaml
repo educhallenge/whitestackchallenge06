@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: challenge-app-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 3m
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "5k"
+    nginx.ingress.kubernetes.io/limit-rpm: "175"
+    nginx.ingress.kubernetes.io/limit-burst-multiplier: "1"
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  # Change the hostname to a unique value
+  - host: edu.challenger-03
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app-service
+            port:
+              number: 80
