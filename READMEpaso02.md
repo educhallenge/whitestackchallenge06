@@ -17,7 +17,7 @@ Ahora vamos a tener 3 sesiones abiertas en paralelo:
 A: Ejecución del script python usando el argumento ***--send_high_load*** . Vemos que los primeros 200 requests tienen un `response code 200` lo cual significa OK.  A partir del request 201 empieza a fallar a veces con un `response code 502` otra veces con `response code 503`.  A partir del request 1436 vuelve a aparecer el `response code 200` pero a partir del request 1654 vuelve a fallar hasta el final, es decir hasta el request 2000.
 
 ```
-challenger-03@challenge-6-pivote:~$ python3 ws-challenge-6/test-challenge6.py --send_high_load
+challenger-03@challenge-6-pivote:~$ python3 ~/ws-challenge-6/test-challenge6.py --send_high_load
 Request 1: 200
 Request 2: 200
 ### output omitido por brevedad
@@ -66,7 +66,7 @@ challenge-app-6f79ff6b8d-fmzvc   1/1     Running            2 (16s ago)   29h
 C: Revisión de logs en el pod en tiempo real. Vemos que los primeros 200 logs indican `response code 200` pero luego vemos el mensaje de error que se excedió un rate limit de 200 requests por minuto.
 
 ```
-challenger-03@challenge-6-pivote:~$ kubectl logs challenge-app-6f79ff6b8d-fmzvc -f
+challenger-03@challenge-6-pivote:~$ kubect logs -l app=challenge-app -f
 # output omitido por brevedad
 2024-10-03 23:37:09,822 - 10.42.110.195 - - [03/Oct/2024 23:37:09] "GET / HTTP/1.1" 200 -
 2024-10-03 23:37:09,832 - 10.42.110.195 - - [03/Oct/2024 23:37:09] "GET / HTTP/1.1" 200 -
