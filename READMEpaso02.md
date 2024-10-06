@@ -166,7 +166,7 @@ Para probar la solución vamos a tener 3 sesiones abiertas en paralelo:
 A: Ejecución del script python usando el argumento ***--send_high_load***  Verificamos que ahora no hay ningún `response code 502`  De los 2000 requests vemos que hay 200 requests con `response code 200` y 1800 requests con `response code 503`.
 
 ```
-challenger-03@challenge-6-pivote:~$ python3 ws-challenge-6/test-challenge6.py --send_high_load > paso02result.txt
+challenger-03@challenge-6-pivote:~$ python3 ~/ws-challenge-6/test-challenge6.py --send_high_load > paso02result.txt
 
 challenger-03@challenge-6-pivote:~$ grep -c ": 200" paso02result.txt
 200
