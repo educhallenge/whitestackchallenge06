@@ -33,7 +33,7 @@ Response Body:
 B: Revisión de logs en el pod en tiempo real. Vemos un solo log indicando que se hizo un request al path `/random-code` y tuvo un `response code 200` 
 
 ```
-challenger-03@challenge-6-pivote:~$ kubectl logs challenge-app-6f79ff6b8d-fmzvc -f
+challenger-03@challenge-6-pivote:~$ kubect logs -l app=challenge-app -f
 # output omitido por brevedad
 2024-10-04 16:22:25,319 - 10.42.110.195 - - [04/Oct/2024 16:22:25] "GET /random-code HTTP/1.1" 200 -
 ```
@@ -167,6 +167,6 @@ Received your request
 También podemos usar el argumento `tail` del comando ***kubectl logs*** y ver el último log de la aplicación el cual también se muestra exitoso con un `response code 200`
 
 ```
-challenger-03@challenge-6-pivote:~$  kubectl logs challenge-app-6f79ff6b8d-fmzvc --tail=1
+challenger-03@challenge-6-pivote:~$  kubect logs -l app=challenge-app --tail=1
 2024-10-05 00:40:34,339 - 10.42.110.195 - - [05/Oct/2024 00:40:34] "GET /random-code HTTP/1.1" 200 -
 ```
