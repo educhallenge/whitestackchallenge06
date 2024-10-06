@@ -185,7 +185,7 @@ challenge-app-6f79ff6b8d-fmzvc   1/1     Running   2 (5h19m ago)   35h
 C: Revisión de logs en el pod en tiempo real. Vemos que todos los logs indican `response code 200` y que no hay ningún mensaje de error porque en ningún momento se excedió el rate limit a nivel de la aplicación de 200 requests 
 
 ```
-challenger-03@challenge-6-pivote:~$ kubectl logs challenge-app-6f79ff6b8d-fmzvc -f
+challenger-03@challenge-6-pivote:~$ kubect logs -l app=challenge-app -f
 ### output omitido por brevedad
 2024-10-04 04:50:40,388 - 10.42.110.195 - - [04/Oct/2024 04:50:40] "GET / HTTP/1.1" 200 -
 2024-10-04 04:50:40,407 - 10.42.110.195 - - [04/Oct/2024 04:50:40] "GET / HTTP/1.1" 200 -
