@@ -1,4 +1,4 @@
-0~# CHALLENGE 06 PASO 5: BALANCEAR LA CARGA DE LOS REQUESTS
+# CHALLENGE 06 PASO 5: BALANCEAR LA CARGA DE LOS REQUESTS
 
 ## 1. ANALISIS DEL REQUERIMIENTO
 
@@ -10,7 +10,6 @@ Además el nuevo ingress deberá usar las siguientes `annotations` para implemen
 
 - `nginx.ingress.kubernetes.io/canary` con el valor "true" para activar la funcionalidad
 - `nginx.ingress.kubernetes.io/canary-weight` con el valor "30" para balancear el 30% de los request al nuevo ingress. El resto, o sea el 70% se balanceará al ingress original que ya estaba en ejecución de antemano.
-
 
 ## 2. CREACIÓN DEL NUEVO DEPLOYMENT Y SERVICE
 
@@ -96,11 +95,8 @@ spec:
 ```
 
 Aplicamos el nuevo archivo. Sin embargo cuando revisamos el status del nuevo pod vemos que constantemente se reinicia
-
-
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$  kubectl apply -f paso05-deployment.yaml 
-
 
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ kubectl get pods
 NAME                                READY   STATUS             RESTARTS       AGE
@@ -109,7 +105,6 @@ challenge-app-v2-749cf45bd6-9psrh   0/1     CrashLoopBackOff   5 (69s ago)    4m
 ```
 
 Revisamos los logs y encontramos un traceback que nos indica un error con el módulo "Flask_Limiter"
-
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ kubectl logs challenge-app-v2-749cf45bd6-9psrh
 Traceback (most recent call last):
@@ -119,8 +114,7 @@ ModuleNotFoundError: No module named 'flask_limiter'
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ 
 ```
 
-Debido a los constantes reinicios no podemos ingresar al pod a realizar troubleshooting. Sin embargo vamos a nuestra máquina local y bajamos la imagen de la ***app:v2*** para revisarla:
-
+Debido a los constantes reinicios no podemos ingresar al pod a realizar troubleshooting. Sin embargo vamos a nuestra máquina local y bajamos la imagen de la ***app:v2*** . Usaremos ***docker*** para hacer el troubleshooting:
 ```
 ieee@linux:~$ sudo docker pull gcr.io/whitestack/challenge-6/app:v2
 v2: Pulling from whitestack/challenge-6/app
@@ -139,7 +133,6 @@ gcr.io/whitestack/challenge-6/app:v2
 ```
 
 Ejecutamos el container y vemos que no se encuentra el módulo "Flask-Limiter" . Por eso procedemos a instalarlo.
-
 ```
 ieee@linux:~$ sudo docker run -it gcr.io/whitestack/challenge-6/app:v2 bash
 
@@ -157,7 +150,6 @@ root@f865860ee746:/app# exit
 ```
 
 A partir de nuestro container modificado vamos a crear una nueva imagen y le asignaremos el nombre y tag ***edual/app:v2***
-
 ```
 ieee@linux:~$ sudo docker ps -a
 CONTAINER ID   IMAGE                                  COMMAND    CREATED          STATUS                     PORTS     NAMES
@@ -193,16 +185,14 @@ d24f9dbb0a3a: Layer already exists
 v2: digest: sha256:ba998d877b52fe471e5e044a061d7b46baafe28fcc3060b366ed5723cf52f74d size: 2415
 ```
 
-
 Volvemos a nuestra VM pivote y el archivo  `paso05-deployment.yaml` lo vamos a copiar a un nuevo archivo llamado  `paso05-deploy-edualv2.yaml`
-En dicho nuevo archivo vamos a modificar el nombre de la imagen
+
+En dicho nuevo archivo vamos a modificar el nombre de la imagen y también decirle a Kubernetes que ejecute el comando ***python*** con el argumento ***app.py***
 
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ cp paso05-deployment.yaml paso05-deploy-edualv2.yaml
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ sed -i 's/gcr.io\/whitestack\/challenge-6\/app:v2/edual\/app:v2/' paso05-deploy-edualv2.yaml
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ sed -i '/app:v2/a \        command: [ "python" ]\n        args: [ "app.py" ]' paso05-deploy-edualv2.yaml
-
-
 ```
 
 Verificamos el contenido del nuevo archivo
@@ -232,7 +222,6 @@ spec:
 ```
 
 Ahora borramos los recursos del archivo `paso05-deployment.yaml` y creamos los recursos del archivo `paso05-deploy-edualv2.yaml`
-
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ kubectl delete -f paso05-deployment.yaml
 deployment.apps "challenge-app-v2" deleted
@@ -244,7 +233,6 @@ service/app-service-v2 created
 ```
 
 Verificamos que los recursos de la app:v2 conviven con los recursos de la app:v1
-
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ kubectl get all
 NAME                                    READY   STATUS    RESTARTS       AGE
@@ -334,9 +322,7 @@ challenge-app-ingress-v2   nginx   edu.challenger-03   10.43.114.145   80      2
 
 ## 4. VERIFICACIÓN DE LA SOLUCIÓN
 
-
 Ahora vamos a ejecutar el script python usando el argumento ***--test_load_balance*** y el output lo guardamos en un archivo para su posterior análisis.
-
 
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ python3 test-challenge6.py --test_load_balance > paso05-output.txt
