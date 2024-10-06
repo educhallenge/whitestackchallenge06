@@ -1,6 +1,8 @@
 # CHALLENGE 06 PASO 1: DESPLEGAR LA APLICACIÓN
 
-Ingresamos a nuestra VM pivote y clonamos el repositorio que nos indicaron en el paso 1. 
+## 1.1 CLONAR LOS ARCHIVOS DEL REPOSITORIO DE WHITESTACK
+
+Ingresamos a nuestra VM pivote y clonamos el repositorio que nos han indicado en este paso 
 
 ```
 challenger-03@challenge-6-pivote:~$ git clone https://github.com/whitestack/ws-challenge-6.git
@@ -23,8 +25,9 @@ total 16
 -rw-rw-r-- 1 challenger-03 challenger-03    2740 Oct  2 18:01 test-challenge6.py
 ```
 
-Procedemos a aplicar el deployment. Verificamos que se despliega exitosamente el pod "challenge-app" y un servicio llamado "app-service".
+## 1.2 APLICAR EL MANIFEST PARA CREAR EL DEPLOYMENT Y EL SERVICE
 
+Procedemos a aplicar el deployment. Verificamos que se despliega exitosamente el pod "challenge-app" y un servicio llamado "app-service".
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ kubectl apply -f deployment.yaml 
 deployment.apps/challenge-app created
@@ -44,7 +47,9 @@ NAME                                       DESIRED   CURRENT   READY   AGE
 replicaset.apps/challenge-app-6f79ff6b8d   1         1         1       4s
 ```
 
-Revisamos el archivo `ingress.yaml` y vemos que dice "\<\<CHANGEME\>\>" en el campo host. Copiamos el archivo ingress.yaml a un nuevo archivo llamado `paso01-ingress.yaml` y allí reemplazamos el valor "\<\<CHANGEME\>\>" por el valor "edu.challenger-03" .
+## 1.3 EDITAR EL CAMPO HOST DEL INGRESS Y APLICAR EL INGRESS
+
+Revisamos el archivo `ingress.yaml` y vemos que dice ***\<\<CHANGEME\>\>*** en el campo host. Copiamos el archivo ingress.yaml a un nuevo archivo llamado `paso01-ingress.yaml` y allí reemplazamos el valor ***\<\<CHANGEME\>\>*** por el valor "edu.challenger-03" .
 
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ grep host ingress.yaml 
@@ -88,6 +93,8 @@ NAME                    CLASS   HOSTS               ADDRESS         PORTS   AGE
 challenge-app-ingress   nginx   edu.challenger-03   10.43.114.145   80      42h
 ```
 
+## 1.4 ANÁLISIS PARA ESCOGER LA RESOLUCIÓN DE NOMBRE DEL URL USADO EN EL INGRESS
+
 Con el comando "kubectl get nodes -owide" podemos saber la dirección IP de cada worker.
 
 ```
@@ -99,9 +106,9 @@ whitestackchallenge-worker-f97ebc81-kfbgg   Ready    worker                     
 whitestackchallenge-worker-f97ebc81-tnx7t   Ready    worker                      190d   v1.28.2+rke2r1   10.101.8.183   <none>        Ubuntu 20.04.2 LTS   5.4.0-65-generic   containerd://1.7.3-k3s1
 ```
 
-Usamos el comando curl y usamos la función "resolve" para resolver el nombre "edu.challenger-03". Probamos exitosamente la resolución con la IP de cada worker.
+Usamos el comando ***cURL*** y usamos la función "resolve" para resolver el nombre "edu.challenger-03". Probamos exitosamente la resolución con la IP de cada uno de los 3 workers.
 
-Probamos exitosamente la resolución con la IP 10.101.8.122 de whitestackchallenge-worker-f97ebc81-gbspf
+- Probamos exitosamente la resolución con la IP 10.101.8.122 de whitestackchallenge-worker-f97ebc81-gbspf
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03 --resolve edu.challenger-03:80:10.101.8.122
 <!doctype html>
@@ -125,7 +132,7 @@ challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03
 </html>challenger-03@challenge-6-pivote:~/ws-challenge-6$
 ```
 
-Ahora probamos exitosamente la resolución con la IP 10.101.8.182 de whitestackchallenge-worker-f97ebc81-kfbgg
+- Ahora probamos exitosamente la resolución con la IP 10.101.8.182 de whitestackchallenge-worker-f97ebc81-kfbgg
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03 --resolve edu.challenger-03:80:10.101.8.182
 <!doctype html>
@@ -149,7 +156,7 @@ challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03
 </html>challenger-03@challenge-6-pivote:~/ws-challenge-6$ 
 ```
 
-Y también probamos exitosamente la resolución con la IP 10.101.8.183 de whitestackchallenge-worker-f97ebc81-tnx7t
+- Y también probamos exitosamente la resolución con la IP 10.101.8.183 de whitestackchallenge-worker-f97ebc81-tnx7t
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03 --resolve edu.challenger-03:80:10.101.8.183
 <!doctype html>
@@ -173,11 +180,9 @@ challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03
 </html>challenger-03@challenge-6-pivote:~/ws-challenge-6$ 
 ```
 
-Hemos comprobado que la resolución funciona con cualquiera de las IPs de los workers. Debido a que no tenemos permisos de root para editar el archivo "etc/hosts" le solicitamos a los compañeros de Whitestack para que nos ayuden agregando la resolución de nombres en dicho archivo. La resolución escogida es "10.101.8.183 edu.challenger-03" como vemos abajo
+Hemos comprobado que la resolución funciona con cualquiera de las IPs de los workers. Por tanto podemos escoger cualquier de dichas IPs. Escogemos por ejemplo que la resolución sea "10.101.8.183 edu.challenger-03" y dicha resolución se configura en el archivo `etc/hosts`. Debido a que no tenemos permisos de root para editar dicho archivo entonces le solicitamos a los compañeros de Whitestack para que nos ayuden agregando la resolución de nombres como se ve abajo
 
 ```
-challenger-03@challenge-6-pivote:~/ws-challenge-6$ 
-challenger-03@challenge-6-pivote:~/ws-challenge-6$ 
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ cat /etc/hosts
 127.0.0.1 localhost
 
@@ -191,7 +196,7 @@ ff02::3 ip6-allhosts
 10.101.8.183 edu.challenger-03
 ```
 
-Ahora podemos usar curl sin la opción "resolve" ya que se usará la resolución del archivo "etc/hosts". Vemos que resuelve el nombre exitosamente.
+Ahora podemos usar ***cURL*** sin la opción "resolve" ya que se usará la resolución del archivo "etc/hosts". Vemos que resuelve el nombre exitosamente.
 
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03
@@ -215,11 +220,14 @@ challenger-03@challenge-6-pivote:~/ws-challenge-6$ curl http://edu.challenger-03
 </body>
 ```
  
-Finalmente nos piden definir la environment variable llamada "INGRESS_HOSTNAME" con el valor que escogimos para nuestro hostname "edu.challenger-03". Dicha environment variable la usaremos en los pasos 2 , 3 , 4 y 5 para ejecutar el script python del archivo `test-challenge6.py`
+## 1.5 DEFINIR ENVIRONMENT VARIABLE "INGRESS_HOSTNAME" 
 
+Finalmente nos piden definir la environment variable llamada "INGRESS_HOSTNAME" con el valor que escogimos para nuestro hostname "edu.challenger-03". Dicha environment variable es necesaria para ejecutar el script python del archivo `test-challenge6.py` y la usaremos en los pasos 02 , 03 , 04 y 05 del presente challenge.
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ more test-challenge6.py | grep getenv
 INGRESS_HOSTNAME = os.getenv('INGRESS_HOSTNAME', 'default-hostname')
 
 challenger-03@challenge-6-pivote:~/ws-challenge-6$  export INGRESS_HOSTNAME="edu.challenger-03"
 ```
+Alternativamente podemos configurar la environment variable en el archivo `.profile` para que se cargue automáticamente cada vez que ingresamos a la VM pivote.
+
