@@ -1,17 +1,19 @@
 # CHALLENGE 06 PASO 5: BALANCEAR LA CARGA DE LOS REQUESTS
 
-## 1. ANALISIS DEL REQUERIMIENTO
+## 5.1 ANALISIS DEL REQUERIMIENTO
 
 El requerimiento es desplegar una nueva versión de la aplicación de forma gradual (70% de la app:v1 y 30%& de la app:v2) Esto corresponde a una técnica llamada ***canary deployment***
 
 Para ejecutar dicha técnica en Kubernetes vamos a crear un nuevo deployment, un nuevo service y un nuevo ingress en paralelo al deployment, al service y al ingress que ya estaban en ejecución de antemano. Es decir los recursos originales de la app:v1 van a convivir con los nuevos recursos de la app:v2.
 
-Además el nuevo ingress deberá usar las siguientes `annotations` para implementar el ***canary deployment***
+Hemos revisado la documentación pública de nginx ingress https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/annotations.md#canary
+
+En dicha documentación vemos que el nuevo ingress deberá usar las siguientes `annotations` para implementar el ***canary deployment***
 
 - `nginx.ingress.kubernetes.io/canary` con el valor "true" para activar la funcionalidad
 - `nginx.ingress.kubernetes.io/canary-weight` con el valor "30" para balancear el 30% de los request al nuevo ingress. El resto, o sea el 70% se balanceará al ingress original que ya estaba en ejecución de antemano.
 
-## 2. CREACIÓN DEL NUEVO DEPLOYMENT Y SERVICE
+## 5.2 CREACIÓN DEL NUEVO DEPLOYMENT Y SERVICE
 
 En nuestra VM pivote vamos a copiar el archivo `deployment.yaml` (el que se usó para desplegar la app original, es decir la app:v1) y vamos a copiarlo a un nuevo archivo llamado `paso05-deployment.yaml`
 
@@ -253,7 +255,7 @@ replicaset.apps/challenge-app-v2-6b8464cddd   1         1         1       2m10s
 
 ```
 
-## 3. CREACIÓN DEL NUEVO INGRESS
+## 5.3 CREACIÓN DEL NUEVO INGRESS
 
 En nuestra VM pivote vamos a copiar el archivo `paso04-ingress.yaml` a un nuevo archivo llamado `paso05-ingress.yaml`
 
@@ -320,7 +322,7 @@ challenge-app-ingress      nginx   edu.challenger-03   10.43.114.145   80      5
 challenge-app-ingress-v2   nginx   edu.challenger-03   10.43.114.145   80      21s
 ```
 
-## 4. VERIFICACIÓN DE LA SOLUCIÓN
+## 5.4 VERIFICACIÓN DE LA SOLUCIÓN
 
 Ahora vamos a ejecutar el script python usando el argumento ***--test_load_balance*** y el output lo guardamos en un archivo para su posterior análisis.
 
@@ -359,7 +361,6 @@ challenger-03@challenge-6-pivote:~/ws-challenge-6$
 ```
 
 Vamos a usar el comando ***grep*** para contar los requests. Vemos que los requests que fueron a la ***app:v1***  se aproxima bastante al 70%  y los requests que fueron a la  ***app:v2***  se aproximan bastante al 30% con lo cual cumplimos con los requerimientos pedidos.
-
 
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ kubectl get pods
