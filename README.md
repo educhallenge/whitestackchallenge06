@@ -1,2 +1,2 @@
 # README whitestackchallenge06
-Escribimos un archivo un readme específico para cada paso del challenge
+Hemos escrito varios archivos readme específicos para cada paso del challenge
