@@ -1,6 +1,6 @@
 # CHALLENGE 06 PASO 4: PROBAR UPLOAD DE UN ARCHIVO
 
-## 1. ANALISIS DEL POR QUÉ DEL ERROR
+## 4.1 ANALISIS DEL POR QUÉ DEL ERROR
 
 Ingresamos a la VM pivote. Recordemos que para usar el script de python debemos usar ***export*** para definir la environment variable INGRESS_HOSTNAME *(alternativamente se configura la environment variable en el archivo `.profile` para que se cargue automáticamente cada vez que ingresamos a la VM pivote)*
  
@@ -24,7 +24,7 @@ En dicha documentación encontramos que el error 413 se produce cuando se excede
 
 Podemos solucionar el problema usando un `annotation` en el ingress como se explica en la siguiente sección.
 
-## 2. SOLUCIÓN
+## 4.2 SOLUCIÓN
 
 Vamos a usar un `annotation` llamado `nginx.ingress.kubernetes.io/proxy-body-size` con el valor de "3m" para que el ingress pueda aceptar subir el archivo `file.bin` que pesa 2 megabytes.
 
