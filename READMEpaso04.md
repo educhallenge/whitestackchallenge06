@@ -125,6 +125,6 @@ drwxr-xr-x 1 root root 4.0K Oct  4 00:04 ..
 También podemos usar el argumento `tail` del comando ***kubectl logs*** y ver el último log de la aplicación de nuestro pod el cual muestra un POST exitoso con el path `/upload` y con un `response code 200`
 
 ```
-challenger-03@challenge-6-pivote:~/ws-challenge-6$  kubectl logs challenge-app-6f79ff6b8d-fmzvc --tail=1
+challenger-03@challenge-6-pivote:~/ws-challenge-6$  kubect logs -l app=challenge-app --tail=1
 2024-10-05 02:26:59,878 - 10.42.110.195 - - [05/Oct/2024 02:26:59] "POST /upload HTTP/1.1" 200 -
 ```
