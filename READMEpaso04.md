@@ -17,8 +17,8 @@ An error occurred: 413 Client Error: Request Entity Too Large for url: http://ed
 ```
 
 Revisamos la siguiente documentación pública del ingress NGINX :
-https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/annotations.md#custom-max-body-size
-https://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size
+- https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/annotations.md#custom-max-body-size
+- https://nginx.org/en/docs/http/ngx_http_core_module.html#client_max_body_size
 
 En dicha documentación encontramos que el error 413 se produce cuando se excede el máximo tamaño del ***request body*** el cual por defecto es 1 megabyte. Y el archivo que intentamos subir con el script python pesa 2 megabytes.
 
