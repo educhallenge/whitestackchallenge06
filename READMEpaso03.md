@@ -1,6 +1,6 @@
 # CHALLENGE 06 PASO 3: ENVIAR LARGE HEADER REQUESTS
 
-## 1. ANALISIS DEL POR QUÉ DEL ERROR
+## 3.1 ANALISIS DEL POR QUÉ DEL ERROR
 
 Ingresamos a la VM pivote. Recordemos que para usar el script de python debemos usar ***export*** para definir la environment variable INGRESS_HOSTNAME *(alternativamente se configura la environment variable en el archivo `.profile` para que se cargue automáticamente cada vez que ingresamos a la VM pivote)*
  
@@ -41,7 +41,7 @@ challenger-03@challenge-6-pivote:~$ kubectl logs challenge-app-6f79ff6b8d-fmzvc 
 De lo anterior vemos que la aplicación del pod tiene un `response code 200`  pero el ingress tiene un `response code 502` lo cual significa que la falla viene del ingress, no de la aplicación.
 
 
-Esto lo comprobamos navegando directamente al servicio en vez de navegar al ingress. Para ellos abrimos 2 sesiones en paralelo:
+Esto lo comprobamos navegando directamente al servicio en vez de navegar al ingress. Para ello otra vez usamos 2 sesiones en paralelo:
 - A: Ejecutar port-forward hacia el servicio
 - B: Navegar hacia el servicio
 
@@ -56,7 +56,7 @@ Forwarding from 127.0.0.1:8000 -> 8080
 Forwarding from [::1]:8000 -> 8080
 Handling connection for 8000
 ```
-B: En una sesión en paralelo navegamos hacia el servicio usando cURL. Usamos la IP del localhost 127.0.0.1, el puerto 8000 (que usamos para hacer port-forwarding) y el path `random-code`.  Además también en cURL usamos el argumento `-w '\n HEADERS SIZE %{size_header} BYTES'` que nos permite averiguar el tamaño de los headers.
+B: En una sesión en paralelo navegamos hacia el servicio usando ***cURL***. Usamos la IP del localhost 127.0.0.1, el puerto 8000 (que usamos para hacer port-forwarding) y el path `random-code`.  Además también con el comando ***cURL*** usamos el argumento `-w '\n HEADERS SIZE %{size_header} BYTES'` que nos permite averiguar el tamaño de los headers.
 ```
 challenger-03@challenge-6-pivote:~$ curl -v 127.0.0.1:8000/random-code -w '\n HEADERS SIZE %{size_header} BYTES'
 *   Trying 127.0.0.1:8000...
@@ -78,15 +78,18 @@ challenger-03@challenge-6-pivote:~$ curl -v 127.0.0.1:8000/random-code -w '\n HE
 Received your request
  HEADERS SIZE 4172 BYTES
 ```
-De la última línea del output anterior vemos que cURL calculó el tamaño de los headers y nos dice `HEADERS SIZE 4172 BYTES` lo cual es muy grande. Si exploramos los headers vemos que hay uno llamado `X-Large-Header` que tiene un tamaño muy grande. Todos los demás headers son pequeños.
+De la última línea del output anterior vemos que ***cURL*** calculó el tamaño de los headers `HEADERS SIZE 4172 BYTES` lo cual es muy grande. Si exploramos los headers vemos que `X-Large-Header` es el responsable de dicho tamaño grande. Todos los demás headers son pequeños.
 
-Revisando la documentación del ingress vemos que usa un tamaño de `proxy_buffer_size` con un valor por defecto de 4 kilobytes, lo cual es menor al tamaño total de los headers y justamente eso es el motivo de que el ingress nos da el error `response code 502`
+Hemos revisado la documentación del ingress nginx https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/annotations.md#proxy-buffer-size 
+
+Allí vemos que usa un tamaño de `proxy_buffer_size` con un valor por defecto de 4 kilobytes, lo cual es menor al tamaño total de los headers y justamente eso es el motivo de que el ingress nos da el error `response code 502`
+
 Para solucionarlo debemos configurar un `annotation` para modificar el `proxy_buffer_size` del ingress.
 
 
-## 2. SOLUCIÓN
+## 3.2 SOLUCIÓN
     
-Vamos a usar un `annotation` llamado `nginx.ingress.kubernetes.io/proxy-buffer-size` con el valor de "5k" para que el ingress pueda aceptar el gran tamaño de los headers que vimos en la sección anterior.
+Vamos a usar un `annotation` llamado `nginx.ingress.kubernetes.io/proxy-buffer-size` con el valor de "5k" para que el ingress pueda aceptar el tamaño de 4172 bytes de los headers que averiguamos en la sección anterior.
 
 Copiamos el archivo `paso02-ingress.yaml` al archivo `paso03-ingress.yaml` y usamos el comando ***sed*** para agregar la ***annotation*** que acabamos de mencionar.
 
@@ -159,7 +162,6 @@ Response Headers:
 
 Response Body:
 Received your request
-
 ```
 
 También podemos usar el argumento `tail` del comando ***kubectl logs*** y ver el último log de la aplicación el cual también se muestra exitoso con un `response code 200`
@@ -167,5 +169,4 @@ También podemos usar el argumento `tail` del comando ***kubectl logs*** y ver e
 ```
 challenger-03@challenge-6-pivote:~$  kubectl logs challenge-app-6f79ff6b8d-fmzvc --tail=1
 2024-10-05 00:40:34,339 - 10.42.110.195 - - [05/Oct/2024 00:40:34] "GET /random-code HTTP/1.1" 200 -
-
 ```
