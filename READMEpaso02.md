@@ -1,6 +1,6 @@
 # CHALLENGE 06 PASO 2: ENVIAR ALTA CARGA DE REQUESTS
 
-## 1. ANALISIS DEL POR QUÉ DEL ERROR
+## 2.1. ANALISIS DEL POR QUÉ DEL ERROR
 
 Ingresamos a la VM pivote. Recordemos que para usar el script de python debemos usar ***export*** para definir la environment variable INGRESS_HOSTNAME *(alternativamente se configura la environment variable en el archivo `.profile` para que se cargue automáticamente cada vez que ingresamos a la VM pivote)*
 
@@ -81,9 +81,11 @@ challenger-03@challenge-6-pivote:~$
 
 Del análisis concluimos que el problema es que el número de requests excede el rate limit definido en la aplicación desplegada en el pod.
 
-## 2. SOLUCIÓN
+## 2.2 SOLUCIÓN
 
-Vamos a usar rate limit a nivel del ingress para evitar exceder el rate limit de la aplicación. Para ello podemos usar las siguientes `annotations` :
+Vamos a usar rate limit a nivel del ingress para evitar exceder el rate limit de la aplicación. 
+
+Revisando la doucmentación pública de ingresss nginx https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/nginx-configuration/annotations.md#rate-limiting vemos que podemos usar las siguientes `annotations` :
 
 - `nginx.ingress.kubernetes.io/limit-rpm` sirve para definir un número máximo de requests per minute desde una determinada IP. Para evitar superar el rate limit de la aplicación el `limit-rpm` debería ser menor a 200. Tras hacer varias pruebas hemos visto que hay bursts que hacen que el número de requests sea un poco mayor a `limit-rpm`. Por ejemplo al probar con el valor de 176 se suman algunos bursts y se excede el rate limit de 200 requests definidos por la aplicación. Es por ello que definimos el valor de `limit-rpm` con el valor 175. 
 - `nginx.ingress.kubernetes.io/limit-burst-multiplier` es un multiplicador de `limit-rpm`. Por defecto el valor del `limit-burst-multiplier` es 5. Pero en este ejemplo vamos a usar el valor de 1.
