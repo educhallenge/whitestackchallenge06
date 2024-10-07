@@ -360,26 +360,28 @@ Pod Name: challenge-app-6f79ff6b8d-fmzvc</p>
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ 
 ```
 
-Debido a que los nombres de los pods son dinámicos vamos a usar unas expresiones para averiguar automáticamente el nombre de los pods
+Debido a que los nombres de los pods son dinámicos vamos a usar unas expresiones para averiguar automáticamente el nombre de los pods y guardarlo en unas variables de bash que se llaman appv1 y appv2
 ```
 challenger-03@challenge-6-pivote:~/ws-challenge-6$ kubectl get pods
 NAME                                READY   STATUS    RESTARTS       AGE
 challenge-app-6f79ff6b8d-fmzvc      1/1     Running   4 (2d9h ago)   3d15h
 challenge-app-v2-6b8464cddd-nnjmj   1/1     Running   0              15m
 
-challenger-03@challenge-6-pivote:~/ws-challenge-6$ basename $(kubectl get pod -l app=challenge-app --no-headers -o name)
-challenge-app-6f79ff6b8d-fmzvc
+challenger-03@challenge-6-pivote:~/ws-challenge-6$ appv1=$(basename $(kubectl get pod -l app=challenge-app --no-headers -o name))
+challenger-03@challenge-6-pivote:~/ws-challenge-6$ appv2=$(basename $(kubectl get pod -l app=challenge-app-v2 --no-headers -o name))
 
-challenger-03@challenge-6-pivote:~/ws-challenge-6$ basename $(kubectl get pod -l app=challenge-app-v2 --no-headers -o name)
+challenger-03@challenge-6-pivote:~/ws-challenge-6$ echo $appv1
+challenge-app-6f79ff6b8d-fmzvc
+challenger-03@challenge-6-pivote:~/ws-challenge-6$ echo $appv2
 challenge-app-v2-6b8464cddd-nnjmj
 ```
 
-Vamos a usar el comando ***grep*** usando las expresiones que vimos antes para averiguar el nombre de los pods. Usamos la opción -c para contar los requests. Vemos que los requests que fueron a la ***app:v1***  se aproxima bastante al 70%  y los requests que fueron a la  ***app:v2***  se aproximan bastante al 30% con lo cual cumplimos con los requerimientos pedidos. Además la suma de ambos valores es igual a los 99 requests que hubo en total
+Vamos a usar el comando ***grep*** usando las variables appv1 y appv2. Usamos la opción -c para contar los requests. Vemos que los requests que fueron a la ***app:v1***  se aproxima bastante al 70%  y los requests que fueron a la  ***app:v2***  se aproximan bastante al 30% con lo cual cumplimos con los requerimientos pedidos. Además la suma de ambos valores es igual a los 99 requests que hubo en total
 
 ```
-challenger-03@challenge-6-pivote:~/ws-challenge-6$ grep -c $(basename $(kubectl get pod -l app=challenge-app --no-headers -o name)) paso05-output.txt 
+challenger-03@challenge-6-pivote:~/ws-challenge-6$ grep -c $appv1 paso05-output.txt 
 69
 
-challenger-03@challenge-6-pivote:~/ws-challenge-6$ grep -c $(basename $(kubectl get pod -l app=challenge-app-v2 --no-headers -o name)) paso05-output.txt
+challenger-03@challenge-6-pivote:~/ws-challenge-6$ grep -c $appv2 paso05-output.txt 
 30
 ```
