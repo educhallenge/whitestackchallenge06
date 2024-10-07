@@ -167,6 +167,6 @@ Received your request
 También podemos usar el argumento `tail` del comando ***kubectl logs*** y ver el último log de la aplicación el cual también se muestra exitoso con un `response code 200`
 
 ```
-challenger-03@challenge-6-pivote:~$  kubect logs -l app=challenge-app --tail=1
+challenger-03@challenge-6-pivote:~$  kubectl logs -l app=challenge-app --tail=1
 2024-10-05 00:40:34,339 - 10.42.110.195 - - [05/Oct/2024 00:40:34] "GET /random-code HTTP/1.1" 200 -
 ```
