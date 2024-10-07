@@ -95,11 +95,13 @@ Events:
   Normal  Sync    13s (x10 over 4d2h)  nginx-ingress-controller  Scheduled for sync
 ```
 
-Antes de probar la solución vamos a verificar que el directorio `uploads` está vacío en nuestro pod 
+Antes de probar la solución vamos a verificar que el directorio `uploads` está vacío en nuestro pod.  Vamos a usar el comando ***"$(kubectl get pod -l app=challenge-app --no-headers -o name)*** para aprender automáticamente cuál es el nombre de nuestro pod y luego usar esa expresión dentro del comando ***kubectl exec*** con el cual vamos a explorar el directorio `uploads` del pod
 
 ```
-challenger-03@challenge-6-pivote:~/ws-challenge-6$  kubectl exec -it challenge-app-6f79ff6b8d-fmzvc -- ls -hal /uploads
-Warning: Use tokens from the TokenRequest API or manually created secret-based tokens instead of auto-generated secret-based tokens.
+challenger-03@challenge-6-pivote:~/ws-challenge-6$ echo "$(kubectl get pod -l app=challenge-app --no-headers -o name)"
+pod/challenge-app-6f79ff6b8d-cch4z
+
+challenger-03@challenge-6-pivote:~/ws-challenge-6$ kubectl exec -it "$(kubectl get pod -l app=challenge-app --no-headers -o name)" -- ls -hal /uploads
 total 8.0K
 drwxrwxrwx 2 root root 4.0K Oct  2 18:19 .
 drwxr-xr-x 1 root root 4.0K Oct  4 00:04 ..
@@ -115,7 +117,7 @@ File uploaded successfully: 200
 Volvemos a verificar el directorio `uploads` de nuestro pod y ahora vemos que está presente el archivo `file.bin` que acabamos de subir usando el script python.
 
 ```
-challenger-03@challenge-6-pivote:~/ws-challenge-6$ kubectl exec -it challenge-app-6f79ff6b8d-fmzvc -- ls -hal /uploads
+challenger-03@challenge-6-pivote:~/ws-challenge-6$ kubectl exec -it "$(kubectl get pod -l app=challenge-app --no-headers -o name)" -- ls -hal /uploads
 total 2.1M
 drwxrwxrwx 2 root root 4.0K Oct  5 02:26 .
 drwxr-xr-x 1 root root 4.0K Oct  4 00:04 ..
