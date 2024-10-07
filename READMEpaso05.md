@@ -108,7 +108,7 @@ challenge-app-v2-749cf45bd6-9psrh   0/1     CrashLoopBackOff   5 (69s ago)    4m
 
 Revisamos los logs y encontramos un traceback que nos indica un error con el módulo "Flask_Limiter"
 ```
-challenger-03@challenge-6-pivote:~/ws-challenge-6$ kubect logs -l app=challenge-app-v2
+challenger-03@challenge-6-pivote:~/ws-challenge-6$ kubectl logs -l app=challenge-app-v2
 Traceback (most recent call last):
   File "/app/app.py", line 3, in <module>
     from flask_limiter import Limiter
